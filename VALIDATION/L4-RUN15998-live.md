@@ -14,7 +14,9 @@
 - 02:41（52min）：14200 / 30 题。
 - 02:45（55min）：15700 / 33 题，硬题逐一下落（+500/波）。
 - 02:45（56min）：16500 / 33 题。
-- 02:47（57min）：17200 / 34 题（g-24 落）。审计统计：failed terminal 仅 3 个（全是 pre-fix 的 glm），timeout verdict 0，共 38 verdict——派单可靠性高，round-timeout 机制尚未触发过。平台实况剩 7 题（g-02/g-03/g-06/g-14/g-17/g-24/g-34，共 4300 分），容器已清空、主 agent 排下一波。g-38/g-01/g-40 三 hard 已倒（各磨 11-12 轮）。DeepSeek ¥13.7。
+- 02:47（57min）：17200 / 34 题
+- 03:00-03:05（70-75min）：**守护链实战风暴（F15/F16/F17 三连）**——fanout 卡 kimi-k3 慢模型 → 活动驱动的心跳停摆 619s → guard 按设计杀进程重启；但 ①AUDIT_SEEN 用"文件存在"判定（旧 mtime 仍算现任）→ 新子进程无宽限被每 20-30s 连杀（重启风暴）；②guard 只杀 bash 包装层 → node 孤儿 12562 存活并发跑。修复：runner 120s 真心跳（yebushou `8fb4493`）+ guard AUDIT_SEEN 按 mtime≥CHILD_STARTED（jintuo `76fdd11`/`9316044`）+ setsid 进程组杀。恢复后战役无损续跑（goal-rearm 生效），g-34 在风暴期间由执行者自行交卷 +800。
+- 03:05（76min）：18600 / 37 题，剩 g-02/g-03/g-06/g-14（2200 分）。（g-24 落）。审计统计：failed terminal 仅 3 个（全是 pre-fix 的 glm），timeout verdict 0，共 38 verdict——派单可靠性高，round-timeout 机制尚未触发过。平台实况剩 7 题（g-02/g-03/g-06/g-14/g-17/g-24/g-34，共 4300 分），容器已清空、主 agent 排下一波。g-38/g-01/g-40 三 hard 已倒（各磨 11-12 轮）。DeepSeek ¥13.7。
 - **F8/F9 旁证**：独立复现进程的 jisi_fanout(glm) 成功调用在 sidecar 落 2 行（usageLines 0→2）——sidecar 机制本身正常，只覆盖 compat 路由；战役进程全程 0 行 = glm 派单从未成功路由过（与 F8 同源）。硬题区开火：g-38/g-01/g-25 三硬核在打（wave 11，各 ~11 rounds 磨题），主 agent 已排好 wave 12-15 全量计划（g-40/g-27/g-28 → g-02/g-03/g-34 → g-24/g-17/g-06 → g-14）。
 - **F13（更新）**：fanout 在收官 hard 双子（g-02/g-03）首次真实使用（主 agent 原话 cheap insurance，5 模型并行征思路，含 glm-5.3×4 / kimi-k2.6×1，全部成功）——fanout 是"需要时用"的合理形态；continuable 仍 0 使用（跨轮状态由 FINDINGS.md 战报承担）。战后复盘：board 传递是否够（硬题 rounds 10+ 的轮次成本 vs continuable 续战的省轮次潜力）。
 - 派单模型分布：deepseek-v4-flash ×25（全成功）、glm-5.3-flash ×3（全静默失败，见 F8）——主 agent 已停止使用 glm（账本/观察生效）。
