@@ -13,7 +13,8 @@
 - 02:33（43min）：11400 / 27 题。
 - 02:41（52min）：14200 / 30 题。
 - 02:45（55min）：15700 / 33 题，硬题逐一下落（+500/波）。
-- 02:45（56min）：16500 / 33 题。平台实况剩 7 题（g-02/g-03/g-06/g-14/g-17/g-24/g-34，共 4300 分），容器已清空、主 agent 排下一波。g-38/g-01/g-40 三 hard 已倒（各磨 11-12 轮）。DeepSeek ¥13.7。
+- 02:45（56min）：16500 / 33 题。
+- 02:47（57min）：17200 / 34 题（g-24 落）。审计统计：failed terminal 仅 3 个（全是 pre-fix 的 glm），timeout verdict 0，共 38 verdict——派单可靠性高，round-timeout 机制尚未触发过。平台实况剩 7 题（g-02/g-03/g-06/g-14/g-17/g-24/g-34，共 4300 分），容器已清空、主 agent 排下一波。g-38/g-01/g-40 三 hard 已倒（各磨 11-12 轮）。DeepSeek ¥13.7。
 - **F8/F9 旁证**：独立复现进程的 jisi_fanout(glm) 成功调用在 sidecar 落 2 行（usageLines 0→2）——sidecar 机制本身正常，只覆盖 compat 路由；战役进程全程 0 行 = glm 派单从未成功路由过（与 F8 同源）。硬题区开火：g-38/g-01/g-25 三硬核在打（wave 11，各 ~11 rounds 磨题），主 agent 已排好 wave 12-15 全量计划（g-40/g-27/g-28 → g-02/g-03/g-34 → g-24/g-17/g-06 → g-14）。
 - **观察 F13（候选）**：硬题磨题仍用一次性 deepseek-v4-flash 重派（rounds:11 重开新兵），continuable 续战机制 0 使用；战报（FINDINGS.md）承担了跨轮状态传递。战后判断：continuable 未激活是主 agent 判断（board 传递够用）还是机制未达发现门槛。
 - 派单模型分布：deepseek-v4-flash ×25（全成功）、glm-5.3-flash ×3（全静默失败，见 F8）——主 agent 已停止使用 glm（账本/观察生效）。
