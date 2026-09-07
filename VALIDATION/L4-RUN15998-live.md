@@ -83,3 +83,4 @@
 - 03:38（108min）：watch-campaign 的 campaign-stall 告警按设计触发（18600 停滞 26min，即 F19 漂移期）——告警面工作正常。主 agent 仍深挖 g-02（BUILD→up.dispatch=PERSID 路径），接近成型。预算剩 ~221min，hard 题 60min 轮时限内仍从容。
 - 03:42（112min）：主 agent 焦点转移——g-02 分析暂停，转为处理 g-06 附件下载机制（查前端 API/会话记录找附件 URL）。进度在动但尚未派单；4 题执行者仍空缺。继续观察。
 - 03:49（119min）：调度优先令生效中——新化身已开始 container-start（g-06/g-14 槽位恢复），同时在给 g-03 写 HTTP desync（rcache+nginx）思路。派单节奏仍慢但方向正确。
+- 03:59（130min）：**舰队全部下水，硬题开始交卷**——g-03（hard 700）经主 agent 亲制的 HTTP desync 思路一次成功（verdict complete，+700 → 19300）；g-06 执行者已解出 RSA 素数重构（等交卷），g-02/g-14 在跑。F19 的成本收益需重估：深分析产出决定性 prompt，g-03 一击命中——"sharp prompt"打法在 hard 题上回报显著，代价是串行期并行机闲置（4 题同时等）。
