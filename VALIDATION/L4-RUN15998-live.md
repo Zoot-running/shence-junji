@@ -76,3 +76,4 @@
 - boot-wedge 规则第二次误杀健康 agent（03:04:44 代在分析 g-02 pickle jail，10 分钟无 runner 工具调用→无审计行→600s 被杀）。根因=F15（无真心跳），根治=热部署：
 - **dev headless profile 已热装新构建**（runner+jisi 均 03:17 构建，含 F8 护栏 + F15 真心跳）；launcher 加 GUARD_BOOT_S=1800；guard 重启后新 agent 于 03:22 开始输出 `heartbeat` 审计行——守护链进入稳态。
 - 教训：插件热装要 export DSH_HOME（首次误装到生产 home，已清理）。
+- 03:23（94min）：g-06 容器已关（腾位）。主 agent 进入"自己精读源码出思路、执行者按思路干活"模式：g-02 已识别为 ictf 2023 you-shall-not-call（公开 writeup 路径），g-03 在精读 rcache.go/admin 源码写尖 prompt——SKILL 的"思路是你出的"打法在纯新环境下正常运转。
