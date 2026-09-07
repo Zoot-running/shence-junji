@@ -30,6 +30,7 @@
 - **F5 工作目录携带上一 run 全部题解**：/home/zrn/xiaochang-work 里有 run 5 的 260 个遗留文件（g-* 每题工作目录、solve 脚本、fe_*.js 前端 dump）。clean-room 门禁只扫 knowledgeDir，**不扫 workdir**。战前未清。已把 mtime<01:47 的遗留全部移入 /home/zrn/xiaochang-archive/workdir-run5/（保留 .venv/.gocache/.gopath 工具链）。**改进：开新 run 前 sweep workdir，或每 run 用独立 workdir。**
 - **F6 虎符战报跨 run 残留**：board 路径 = cwd/boards/<组>/FINDINGS.md，run 5 的 42 份 FINDINGS 原样带进 run 6，首波执行者直接读到旧战报（main agent 波计划里明说 "board solutions"）。已清（旧 mtime 的 FINDINGS 覆盖为占位）。**改进：boards 按 run 隔离或开跑前清空。**
 - **F7 归档位置可见性**：先前的会话归档放在 .dsh-dev 树内，tool-less boot 的 agent 自行探索了归档。已移到 /home/zrn/xiaochang-archive 并在开战令加"禁止读归档"红线。**改进：归档落 DSH_HOME 之外 + 开战令默认含红线。**
+- **F14 污染窗口实锤（F5 延伸）**：主 agent 波 1-12 的执行者 prompt 明确引用"上 run 完整解法 + 现成脚本 /home/zrn/xiaochang-work/g-XX/solve_live.py"——即 02:17 清理前，主 agent 主动使用了 run 5 工件。清理后（wave 13+）最新会话无任何遗留引用 → **前 27 分钟成绩含旧工件红利；02:17 之后的收官阶段才是纯架构验证**。另：hufu_continue/jisi_fanout 工具描述确认在主 agent 工具表里（机制可达），F13 是"可达但未用"，属调度偏好问题。
 - **F12 平台 flag 跨 run 不变**：g-39/g-13/g-32 的 flag 与 run 5 完全一致（平台不重随机化）。→ 任何历史 flag 记忆 = 直接复用；clean-room 价值比预想更高，F5/F6 的清理是必须而非可选。
 
 ### 工具/运行时类
