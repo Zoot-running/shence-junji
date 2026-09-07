@@ -4,68 +4,70 @@
 > 战前净化：归档 run 5 会话 + 快照 + usage sidecar；集思账本（deepseek-v4-flash 9/9）保留跨 run 继承。
 > 价格表已校准（L2-MODEL-CATALOG-2026-09）。余额快照：DeepSeek ¥284.60 / Kimi ¥181.07 / 智谱 ¥159.92。
 
-## 得分轨迹（live）
-- 01:54（~4min）：0 分 —— 两次启动失败在修环境（见 F1-F4）。
-- 02:07（17min）：2100 / 3 题（g-39 hard +1000、g-19 +500、g-30 +600）。
-- 02:13（24min）：4300 / 11 题。
-- 02:19（29min）：7500 / 18 题，容器 2-3 满载，DeepSeek 花费 ¥6.83，Kimi/智谱零花费。
-- 02:30（40min）：10500 / 24 题，容器 3 满载，DeepSeek ¥9.4，Kimi/智谱仍零花费。
-- 02:33（43min）：11400 / 27 题。
-- 02:41（52min）：14200 / 30 题。
-- 02:45（55min）：15700 / 33 题，硬题逐一下落（+500/波）。
-- 02:45（56min）：16500 / 33 题。
-- 02:47（57min）：17200 / 34 题
-- 03:00-03:05（70-75min）：**守护链实战风暴（F15/F16/F17 三连）**——fanout 卡 kimi-k3 慢模型 → 活动驱动的心跳停摆 619s → guard 按设计杀进程重启；但 ①AUDIT_SEEN 用"文件存在"判定（旧 mtime 仍算现任）→ 新子进程无宽限被每 20-30s 连杀（重启风暴）；②guard 只杀 bash 包装层 → node 孤儿 12562 存活并发跑。修复：runner 120s 真心跳（yebushou `8fb4493`）+ guard AUDIT_SEEN 按 mtime≥CHILD_STARTED（jintuo `76fdd11`/`9316044`）+ setsid 进程组杀。恢复后战役无损续跑（goal-rearm 生效），g-34 在风暴期间由执行者自行交卷 +800。
-- 03:05（76min）：18600 / 37 题，剩 g-02/g-03/g-06/g-14（2200 分）。
-- 03:09（80min）：风暴后恢复验证——guard 轮转正常（agent 轮末 code=0 退出→guard 重拉→goal-rearm 续跑）；新 agent 重派 g-02/g-03/g-06（3 容器满），其中 g-06 派 glm-5.3-flash（F8 暂态后 glm 在战役内首次再上阵，结果即活体验证）。（g-24 落）。审计统计：failed terminal 仅 3 个（全是 pre-fix 的 glm），timeout verdict 0，共 38 verdict——派单可靠性高，round-timeout 机制尚未触发过。平台实况剩 7 题（g-02/g-03/g-06/g-14/g-17/g-24/g-34，共 4300 分），容器已清空、主 agent 排下一波。g-38/g-01/g-40 三 hard 已倒（各磨 11-12 轮）。DeepSeek ¥13.7。
-- **F8/F9 旁证**：独立复现进程的 jisi_fanout(glm) 成功调用在 sidecar 落 2 行（usageLines 0→2）——sidecar 机制本身正常，只覆盖 compat 路由；战役进程全程 0 行 = glm 派单从未成功路由过（与 F8 同源）。硬题区开火：g-38/g-01/g-25 三硬核在打（wave 11，各 ~11 rounds 磨题），主 agent 已排好 wave 12-15 全量计划（g-40/g-27/g-28 → g-02/g-03/g-34 → g-24/g-17/g-06 → g-14）。
-- **F13（更新）**：fanout 在收官 hard 双子（g-02/g-03）首次真实使用（主 agent 原话 cheap insurance，5 模型并行征思路，含 glm-5.3×4 / kimi-k2.6×1，全部成功）——fanout 是"需要时用"的合理形态；continuable 仍 0 使用（跨轮状态由 FINDINGS.md 战报承担）。战后复盘：board 传递是否够（硬题 rounds 10+ 的轮次成本 vs continuable 续战的省轮次潜力）。
-- 派单模型分布：deepseek-v4-flash ×25（全成功）、glm-5.3-flash ×3（全静默失败，见 F8）——主 agent 已停止使用 glm（账本/观察生效）。
+## 得分轨迹
+| 时刻 | elapsed | 分数 | 事件 |
+|---|---|---|---|
+| 01:54 | ~4min | 0 | 两次启动失败修环境（F1-F4） |
+| 02:07 | 17min | 2100 | g-39(hard+1000)/g-19(+500)/g-30(+600) |
+| 02:13 | 24min | 4300 | 11 题 |
+| 02:19 | 29min | 7500 | 18 题，容器满载 |
+| 02:30 | 40min | 10500 | 24 题 |
+| 02:33 | 43min | 11400 | 27 题，硬题区开火 |
+| 02:41 | 52min | 14200 | 30 题，g-38/g-01/g-40 三 hard 已倒 |
+| 02:45 | 56min | 16500 | 33 题 |
+| 02:47 | 57min | 17200 | 34 题（g-24 落） |
+| 02:52 | 62min | 17800 | 35 题（g-17 CSIDH MITM 干净解出） |
+| 03:05 | 76min | 18600 | 37 题（风暴期间 g-34 执行者自交卷 +800） |
+| 03:10 | 81min | 18600 | 收官 4 题（g-02/g-03/g-06/g-14）执行者在磨 |
 
-## 发现（F 编号，战后定稿）
+花费轨迹：02:19 ¥6.83 → 02:30 ¥9.4 → 02:41 ¥13.7 → 02:45 ¥14.5 → 03:00 DeepSeek ¥264.31（¥20.3）/ Kimi ¥179.14（fanout 花 ¥1.93）/ 智谱少量（fanout+glm 执行者）。
 
-### 启动/运维类
-- **F1 DSH_HOME 未导出**：guard-runner 拉起 headless 时只传了 GUARD_DSH_HOME，子进程 DSH_HOME 落错 home → 无工具可用，agent 空转 4 分钟找工具（还去翻了归档会话）。→ run6-launch.sh 显式 `export DSH_HOME` 修复。
-- **F2 dev home 缺凭据**：MISSING_CREDENTIAL deepseek-official 致 boot 直接 exit 1（guard 连挂 2 次）。dev 的 .credentials.yaml 只有浏览器会话 grant；生产用 refs。→ launcher 导出 DEEPSEEK/KIMI/ZHIPU_API_KEY 修复。**应把凭据注入写进 jintuo/guard 的启动文档与脚本**。
-- **F3 self-pkill 再现**：`pkill -f "guard-runner.sh"` 匹配到自身 shell cmdline 被杀，新 guard 没起来。→ 一律按 PID 杀。
-- **F4 GUARD_CMD 需 export**：脚本里普通赋值不随 `exec bash guard-runner.sh` 传播，guard 报 GUARD_CMD required。→ export 修复。
+## 发现定稿（F1-F17）
 
-### 治理/clean-room 类（本轮最大发现域）
-- **F5 工作目录携带上一 run 全部题解**：/home/zrn/xiaochang-work 里有 run 5 的 260 个遗留文件（g-* 每题工作目录、solve 脚本、fe_*.js 前端 dump）。clean-room 门禁只扫 knowledgeDir，**不扫 workdir**。战前未清。已把 mtime<01:47 的遗留全部移入 /home/zrn/xiaochang-archive/workdir-run5/（保留 .venv/.gocache/.gopath 工具链）。**改进：开新 run 前 sweep workdir，或每 run 用独立 workdir。**
-- **F6 虎符战报跨 run 残留**：board 路径 = cwd/boards/<组>/FINDINGS.md，run 5 的 42 份 FINDINGS 原样带进 run 6，首波执行者直接读到旧战报（main agent 波计划里明说 "board solutions"）。已清（旧 mtime 的 FINDINGS 覆盖为占位）。**改进：boards 按 run 隔离或开跑前清空。**
-- **F7 归档位置可见性**：先前的会话归档放在 .dsh-dev 树内，tool-less boot 的 agent 自行探索了归档。已移到 /home/zrn/xiaochang-archive 并在开战令加"禁止读归档"红线。**改进：归档落 DSH_HOME 之外 + 开战令默认含红线。**
-- **F14 污染窗口实锤（F5 延伸）**：主 agent 波 1-12 的执行者 prompt 明确引用"上 run 完整解法 + 现成脚本 /home/zrn/xiaochang-work/g-XX/solve_live.py"——即 02:17 清理前，主 agent 主动使用了 run 5 工件。清理后（wave 13+）最新会话无任何遗留引用 → **前 27 分钟成绩含旧工件红利；02:17 之后的收官阶段才是纯架构验证**。另：hufu_continue/jisi_fanout 工具描述确认在主 agent 工具表里（机制可达），F13 是"可达但未用"，属调度偏好问题。
-- **F12 平台 flag 跨 run 不变**：g-39/g-13/g-32 的 flag 与 run 5 完全一致（平台不重随机化）。→ 任何历史 flag 记忆 = 直接复用；clean-room 价值比预想更高，F5/F6 的清理是必须而非可选。
+### A. 启动/运维（已全部修复）
+- **F1** DSH_HOME 未导出 → headless 落错 home、无工具。修复：run6-launch.sh 显式 export。
+- **F2** dev home 缺 API 凭据（MISSING_CREDENTIAL）→ boot exit 1 连挂。修复：launcher 导出三 key。应把凭据注入写进 jintuo 文档。
+- **F3** self-pkill 再现（pkill -f 匹配自身 cmdline）。纪律：一律按 PID 杀。
+- **F4** GUARD_CMD 需 export（普通赋值不随 exec 传播）。
 
-### 工具/运行时类
-- **F8 glm-5.3-flash 派单静默失败（根因已实锤 + 暂态修正）**：
-  新证据（02:50）：主 agent 对 g-02/g-03 发起 jisi_fanout，战役进程内 compat 路由**现在完全正常**——sidecar 记下 zhipu-official/glm-5.3 ×4 + kimi-official/kimi-k2.6 ×1（11.2k/20.5k tokens），全部成功。→ 误路由不是持续进程状态，而是**开局 4 分钟窗口的暂态**（疑插件注册竞态），叠加"解析失败静默回落默认路由"的 bug 才造成 3 连静默死亡。我方响亮失败护栏（jisi 0bfa3d9）正是把这类暂态从无声损失变成当场可见的正确修法。
-- **F8 glm-5.3-flash 派单静默失败（根因已实锤）**：子代理 session 的 request/header 显示 `provider=deepseek-official, model=glm-5.3-flash, reasoningEffort=low` → DeepSeek 报"supported API model names are..." → 子代理无输出静默死亡（turn/end reason=error 但 detail 落账为空）。即：**model→provider 解析在战役进程里失效，回落到父 agent 的 deepseek-official 路由**。对照实验：独立 workdir 新进程 jisi_fanout(glm-5.3-flash) 带/不带 effort=low 均成功——同一 profile 新 boot 正常，战役进程异常（进程内状态不可事后内省）。修复（已实施，run 内不生效、下次 boot 生效）：①jisi.delegate 解析不到 provider / 目录未宣告模型 → 响亮失败（jisi `0bfa3d9`，已测 26/26）；②runner enqueue 前校验模型在集思目录（yebushou `ca2be63`，已测 10/10）；③hufu terminal detail 带诊断——jisi 已有 [diagnostic] 追加逻辑，空 detail 的根因是 DSH 对 model-name 校验错误不产 diagnostic，①的护栏使该场景不再发生。
-- **F9 usage sidecar 零写入（根因已定位，与 F8 同源）**：全部会话检索无任何 zhipu 调用痕迹 → glm 子代理在 spawn 阶段即失败，从未产生 LLM 调用；usage sidecar 只覆盖 compat 路由（kimi/智谱），native deepseek 路由本就不记（backlog：deepseek-native-adapter 也要 sidecar）。→ 战役全程花费核算盲区，靠 watcher 余额差兜底。
-- **F10 watch-campaign 误报**：审计文件尚不存在时报 stale 999999s（启动期 2 条误警）。guard-runner 有 AUDIT_SEEN 门，watcher 没有。**已修复**（shence-jintuo `9520900`，AUDIT_SEEN 门，watcher 已重启）。
-- **F11 agent 的 bash 里看不到 BENCHMARK_TOKEN**：main agent 曾为探平台 API 花 2 轮逆向前端（token 在 launcher env，不在 agent shell）。平台知识应经工具而非 agent shell 提供。
+### B. 治理/clean-room（本轮最大发现域）
+- **F5** workdir 携带 run 5 全部题解（260 文件：g-* 目录/solve 脚本/fe_*.js）。clean-room 门禁只扫 knowledgeDir，不扫 workdir。已清理归档。改进：开跑前 sweep workdir 或每 run 独立 workdir。
+- **F6** 虎符战报跨 run 残留（cwd/boards/<组>/FINDINGS.md 42 份旧战报带入 run 6 首波）。改进：boards 按 run 隔离或开跑前清空。
+- **F7** 归档位置可见性：先放 .dsh-dev 树内，tool-less boot 的 agent 自行翻查。已移出 + 开战令加红线。
+- **F12** 平台 flag 跨 run 不变（g-39/g-13/g-32 与 run 5 相同）→ 历史记忆复用风险极高，clean-room 必须严格。
+- **F14** 污染窗口实锤：波 1-12 主 agent 明确引用"上 run 完整解法+现成脚本"；02:17 清理后（wave 13+）零引用。→ **前 27 分钟成绩含旧工件红利，收官阶段才是纯架构验证**。
 
-### 正向观察
-- 集思账本生效：12 个 enqueue 里 9 个选 deepseek-v4-flash（账本 9/9）——按历史胜率+价格选型符合设计。
-- CTF 公理生效：g-39 先取附件解出（"decoded from this run's attachment"）。
-- 花费纪律：7500 分只花 DeepSeek ¥6.83（夜间半价窗口），贵模型零调用。
-- 全新会话（无 run 5 记忆）依然 29 分钟 18 题——但受 F5/F6 污染影响，前半程含旧工件红利，后程才是纯架构验证。
+### C. 工具/运行时
+- **F8** glm 派单静默失败（3/3，detail 为空）：子代理 header 实锤误路由 `provider=deepseek-official, model=glm-5.3-flash, effort=low` → DeepSeek 模型名校验错误 → 静默死亡。对照实验（独立进程 fanout 带/不带 effort）均成功；02:50 fanout 与 03:10 glm 执行者在战役进程内均成功 → **误路由是开局 4 分钟窗口的暂态**（疑插件注册竞态），叠加"解析失败静默回落默认路由"bug 造成 3 连死亡。修复已落地：jisi `0bfa3d9`（解析不到 provider/目录未宣告 → 响亮失败）+ runner `ca2be63`（enqueue 目录校验）。
+- **F9** usage sidecar 盲区：只覆盖 compat 路由；native deepseek 不记（backlog）；战役前期 glm 未路由成功 → usageLines 长期 0。复现进程/战役 fanout 均正常落盘 → 机制本身没问题。
+- **F10** watch-campaign 缺 AUDIT_SEEN 门（启动期误报 stale 999999s）。已修复（jintuo `9520900`）。
+- **F11** agent 的 bash 看不到 BENCHMARK_TOKEN（平台知识应经工具提供）。
+- **F13** continuable 0 使用；fanout 收官 hard 双子首次使用（5 模型并行征思路，主 agent 原话 cheap insurance）——fanout 形态合理；continuable 待复盘（board 传递 vs 续战省轮次）。
 
-## 战后待办（收尾清单）
-1. 确认 xiaochang_finish 停表（主 agent 应自动执行；否则我手动调前端 API）。
-2. dev headless profile 重装插件（jisi `0bfa3d9` + runner `ca2be63` 的 F8 护栏进入已装构建）。
-3. F13 复盘：continuable/fanout 全程零使用——查主 agent 是否知道这两个机制（工具描述可达性），判断是机制门槛还是合理判断。
-4. 终稿：得分曲线 vs run 5 对比、花费对比、F1-F12 定稿 → L4-RUN15998.md。
-5. 余额校准快照（DeepSeek/Kimi/智谱）与 jisi priceTable 一致性复核。
+### D. 守护链（live 风暴，全部已修复）
+- **F15** runner 审计心跳是活动驱动的（无独立定时器）→ fanout 卡 kimi-k3 慢模型 10 分钟 → 心跳停摆。修复：120s 真心跳定时器（yebushou `8fb4493`）。
+- **F16** guard AUDIT_SEEN 判定 bug（"文件存在"=现任写过；旧 mtime 仍算）→ stale-kill 重启后新进程无 boot 宽限 → 每 20-30s 连杀的重启风暴。修复：mtime ≥ CHILD_STARTED 判定（jintuo `9316044`）。
+- **F17** guard 只杀 bash 包装层 → node 孤儿（12562）存活并发跑。修复：setsid 进程组杀（jintuo `76fdd11`）。
+- 风暴期间架构设计经受住检验：执行者为独立子进程，主 agent 进程被 kill 后 g-34 执行者照常交卷（+800）；goal-rearm 使新进程无损续跑。
 
-## 战后重装命令（确认版本已陈旧：profile 内 jisi/runner lib 均为 09-06/09-07 构建）
-```bash
-# 在 dev checkout 内（或直接操作 profile 目录）：
-cd /mnt/d/Software/WSLSoftware/Agents/deepseek-harness-dev
-node apps/cli/lib/bin.js plugin --profile headless rm @shence/jisi
-node apps/cli/lib/bin.js plugin --profile headless add "file:/mnt/d/Software/WSLSoftware/Projects/Security/ShenCe/shence-jisi"
-node apps/cli/lib/bin.js plugin --profile headless rm @shence/xiaochang-runner
-node apps/cli/lib/bin.js plugin --profile headless add "file:/mnt/d/Software/WSLSoftware/Projects/Security/ShenCe/shence-yebushou/packages/runner"
-# 同理刷新 @shence/hufu / llm-openai-compat（如有新提交）
-```
-- 03:10（81min）：**glm 战役内活体验证通过**——sidecar 实时记录 zhipu-official/glm-5.3-flash 连续调用（12.1k/27.4k、27.8k/78 tokens），g-06 执行者正在正常干活。F8 暂态定论成立。
+### E. 正向验证
+- 集思账本生效（12 个首批派单 9 个选 deepseek-v4-flash 9/9）；glm 3 连失败后主 agent 主动弃用（负反馈闭环）。
+- CTF 公理生效（g-39 附件先取）。
+- 派单可靠性：38+ verdict 中 failed 仅 glm×3（pre-fix），round-timeout 0 触发。
+- 花费纪律：贵模型（kimi-k3/k2.6 大调用）仅 fanout 时用一次；主力 deepseek 夜间半价 + glm-flash。
+- hint 0 使用（主 agent 一直自研/战报磨题）。
+
+## 战后待办
+1. 确认 xiaochang_finish 停表（主 agent 应自动执行；否则手动调前端 API）。
+2. dev headless profile 重装插件（jisi `0bfa3d9` + runner `ca2be63`/`8fb4493` 进入已装构建）：
+   ```bash
+   cd /mnt/d/Software/WSLSoftware/Agents/deepseek-harness-dev
+   node apps/cli/lib/bin.js plugin --profile headless rm @shence/jisi
+   node apps/cli/lib/bin.js plugin --profile headless add "file:/mnt/d/Software/WSLSoftware/Projects/Security/ShenCe/shence-jisi"
+   node apps/cli/lib/bin.js plugin --profile headless rm @shence/xiaochang-runner
+   node apps/cli/lib/bin.js plugin --profile headless add "file:/mnt/d/Software/WSLSoftware/Projects/Security/ShenCe/shence-yebushou/packages/runner"
+   ```
+3. F13 复盘：continuable 零使用的判断（board 传递 vs 续战）。
+4. 终稿 L4-RUN15998.md：得分曲线 vs run 5、花费对比、F1-F17 定稿。
+5. 余额校准快照复核。
+6. 启动规程固化：run6-launch.sh 的经验（DSH_HOME/凭据/export/按 PID 杀）应进 jintuo README。
