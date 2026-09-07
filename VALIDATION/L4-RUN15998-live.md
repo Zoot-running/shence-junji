@@ -68,3 +68,4 @@ node apps/cli/lib/bin.js plugin --profile headless rm @shence/xiaochang-runner
 node apps/cli/lib/bin.js plugin --profile headless add "file:/mnt/d/Software/WSLSoftware/Projects/Security/ShenCe/shence-yebushou/packages/runner"
 # 同理刷新 @shence/hufu / llm-openai-compat（如有新提交）
 ```
+- 03:10（81min）：**glm 战役内活体验证通过**——sidecar 实时记录 zhipu-official/glm-5.3-flash 连续调用（12.1k/27.4k、27.8k/78 tokens），g-06 执行者正在正常干活。F8 暂态定论成立。
