@@ -71,3 +71,8 @@
 4. 终稿 L4-RUN15998.md：得分曲线 vs run 5、花费对比、F1-F17 定稿。
 5. 余额校准快照复核。
 6. 启动规程固化：run6-launch.sh 的经验（DSH_HOME/凭据/export/按 PID 杀）应进 jintuo README。
+
+## 现场热修记录（03:17-03:22）
+- boot-wedge 规则第二次误杀健康 agent（03:04:44 代在分析 g-02 pickle jail，10 分钟无 runner 工具调用→无审计行→600s 被杀）。根因=F15（无真心跳），根治=热部署：
+- **dev headless profile 已热装新构建**（runner+jisi 均 03:17 构建，含 F8 护栏 + F15 真心跳）；launcher 加 GUARD_BOOT_S=1800；guard 重启后新 agent 于 03:22 开始输出 `heartbeat` 审计行——守护链进入稳态。
+- 教训：插件热装要 export DSH_HOME（首次误装到生产 home，已清理）。
