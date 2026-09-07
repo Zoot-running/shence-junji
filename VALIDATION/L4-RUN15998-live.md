@@ -29,7 +29,7 @@
 - **F12 平台 flag 跨 run 不变**：g-39/g-13/g-32 的 flag 与 run 5 完全一致（平台不重随机化）。→ 任何历史 flag 记忆 = 直接复用；clean-room 价值比预想更高，F5/F6 的清理是必须而非可选。
 
 ### 工具/运行时类
-- **F8 glm-5.3-flash 派单静默失败（收敛中）**：3/3 次 dispatch（g-19/g-30/g-32）terminal=failed 且 detail 为空；主 agent 自己兜底解掉。API 直连正常（thinking enabled / 不带 thinking 均可）；全部会话无 zhipu 调用痕迹 → 死在 ctx.subagents.start 的 spawn 阶段（agentOptions.provider=zhipu-official 未生效或子代理起不来），LLM 根本没被调用。战后用 jisi_fanout(glm) 最小复现定根因。**detail 为空 = 失败诊断未透出，audit 需补 diagnostic。**
+- **F8 glm-5.3-flash 派单静默失败（根因已实锤）**：子代理 session 的 request/header 显示 `provider=deepseek-official, model=glm-5.3-flash, reasoningEffort=low` → DeepSeek 报"supported API model names are..." → 子代理无输出静默死亡（turn/end reason=error 但 detail 落账为空）。即：**model→provider 解析在战役进程里失效，回落到父 agent 的 deepseek-official 路由**。对照实验：独立 workdir 新进程 jisi_fanout(glm-5.3-flash) 带/不带 effort=low 均成功——同一 profile 新 boot 正常，战役进程异常（进程内状态不可事后内省）。修复（战后）：①jisi.delegate 解析不到 provider 时**响亮失败**（返回 failed report + 诊断，禁止静默回落默认路由）；②hufu terminal detail 带上 stopReason/diagnostic（现在为空=盲区）；③runner 只允许 enqueue 目录中确定存在的模型。
 - **F9 usage sidecar 零写入（根因已定位，与 F8 同源）**：全部会话检索无任何 zhipu 调用痕迹 → glm 子代理在 spawn 阶段即失败，从未产生 LLM 调用；usage sidecar 只覆盖 compat 路由（kimi/智谱），native deepseek 路由本就不记（backlog：deepseek-native-adapter 也要 sidecar）。→ 战役全程花费核算盲区，靠 watcher 余额差兜底。
 - **F10 watch-campaign 误报**：审计文件尚不存在时报 stale 999999s（启动期 2 条误警）。guard-runner 有 AUDIT_SEEN 门，watcher 没有。**已修复**（shence-jintuo `9520900`，AUDIT_SEEN 门，watcher 已重启）。
 - **F11 agent 的 bash 里看不到 BENCHMARK_TOKEN**：main agent 曾为探平台 API 花 2 轮逆向前端（token 在 launcher env，不在 agent shell）。平台知识应经工具而非 agent shell 提供。
