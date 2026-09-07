@@ -82,3 +82,4 @@
 - 03:37（105min）：干预重启（kill -9 → guard 20s 重拉）后，新化身经会话恢复**无缝接续** g-02 分析（已记起 SekaiCTF 2023 官方 writeup 的 PERSID 意图解路径）——会话持久化跨化身保留深度工作（正向验证 resume 设计）；F19 漂移仍在但接近产出（意图解已找到）。决定：不再干预，等其完成分析后统一派单。
 - 03:38（108min）：watch-campaign 的 campaign-stall 告警按设计触发（18600 停滞 26min，即 F19 漂移期）——告警面工作正常。主 agent 仍深挖 g-02（BUILD→up.dispatch=PERSID 路径），接近成型。预算剩 ~221min，hard 题 60min 轮时限内仍从容。
 - 03:42（112min）：主 agent 焦点转移——g-02 分析暂停，转为处理 g-06 附件下载机制（查前端 API/会话记录找附件 URL）。进度在动但尚未派单；4 题执行者仍空缺。继续观察。
+- 03:49（119min）：调度优先令生效中——新化身已开始 container-start（g-06/g-14 槽位恢复），同时在给 g-03 写 HTTP desync（rcache+nginx）思路。派单节奏仍慢但方向正确。
