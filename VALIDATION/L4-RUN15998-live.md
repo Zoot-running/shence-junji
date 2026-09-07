@@ -43,3 +43,10 @@
 - CTF 公理生效：g-39 先取附件解出（"decoded from this run's attachment"）。
 - 花费纪律：7500 分只花 DeepSeek ¥6.83（夜间半价窗口），贵模型零调用。
 - 全新会话（无 run 5 记忆）依然 29 分钟 18 题——但受 F5/F6 污染影响，前半程含旧工件红利，后程才是纯架构验证。
+
+## 战后待办（收尾清单）
+1. 确认 xiaochang_finish 停表（主 agent 应自动执行；否则我手动调前端 API）。
+2. dev headless profile 重装插件（jisi `0bfa3d9` + runner `ca2be63` 的 F8 护栏进入已装构建）。
+3. F13 复盘：continuable/fanout 全程零使用——查主 agent 是否知道这两个机制（工具描述可达性），判断是机制门槛还是合理判断。
+4. 终稿：得分曲线 vs run 5 对比、花费对比、F1-F12 定稿 → L4-RUN15998.md。
+5. 余额校准快照（DeepSeek/Kimi/智谱）与 jisi priceTable 一致性复核。
