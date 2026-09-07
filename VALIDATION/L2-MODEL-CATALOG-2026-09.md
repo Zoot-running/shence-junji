@@ -56,8 +56,13 @@ glm-4.5 / glm-4.5-air / glm-4.6 / glm-4.7 / glm-5 / glm-5-turbo / glm-5.1 / glm-
 → 夜间打题用 DeepSeek 成本减半，与实测"夜间便宜"一致。
 
 ### 智谱
-- GLM-5.3：**$1.40 输入 / $4.40 输出（国际价，≈¥10 / ¥31）**，1M 上下文（新闻源 cocoloop 2026-08；智谱平台价格页为 JS 渲染无法静态抓取）。
-- 其余模型单价：**ESTIMATE 未校准**，待用户完成智谱控制台登录后按价格页核对（免费模型：GLM-4.7-Flash / GLM-4.5-Flash / GLM-4-Flash-250414 等，可作零成本执行器候选）。
+- **GLM-5.3**：输入 ¥8 / 输出 ¥28 / 缓存命中 ¥2.3 每百万（晚点 LatePost 官方口径：GLM-5.3-Flash 0.8/2.8/0.23 为其十分之一；360 模型广场聚合页 7.6/26.6/1.9 基本一致）。
+- **GLM-5.3-Flash**：¥0.8 / ¥2.8 / 命中 ¥0.23（晚点/chinaz 2026-08）。
+- **GLM-4.7**：¥2 / ¥8 / 命中 ¥0.2（360 模型广场页；官方价格页未列 4.7+ 世代）。
+- **glm-4.6 / glm-4.5-air**：仍 ESTIMATE（¥1/¥4 与 ¥0.5/¥1），待价格页核对。
+- 平台价格页 operation 配置（登录后 `GET /api/biz/operation/query?ids=1122,...`）可列出全部老世代模型单价；其中 **GLM-Z1-Flash、GLM-4-Flash-250414、GLM-4V-Flash 等标注"免费"**。
+- **账户实况（2026-09-08 登录后实查）**：余额 ¥159.92，累计充值 ¥300，总消耗 ¥140.08（`/api/biz/account/query-customer-account-report`）。
+- 智谱登录会话：cookie `bigmodel_token_production`（JWT）+ `Authorization: Bearer <同JWT>` 头才可调 biz 接口；session 已存 `.secrets/`（本地不公开）。
 
 ## 3. 对集思 priceTable 的影响（已落实，见 shence-jisi 提交）
 - 旧表严重低估 Kimi：k2.6 输出写 ¥3 → 实际 **¥27**（9 倍）；k3 输出 ¥32 → 实际 **¥100**。已按上表修正。
@@ -66,6 +71,5 @@ glm-4.5 / glm-4.5-air / glm-4.6 / glm-4.7 / glm-5 / glm-5-turbo / glm-5.1 / glm-
 - priceOrder 按真实单价重排（便宜→贵 tiebreak）。
 
 ## 4. 遗留
-- 智谱控制台登录：`/api/biz/code/smsCode/*`（GET）已下线（接口不存在）；生效路径 `POST /api/biz/code/smsCode/VerifyCaptcha`（数美滑块）或 `/TencentVerifyCaptcha`（腾讯验证码）——人机验证无法 curl 化，需用户浏览器完成。
-- 智谱余额/账单接口（登录后可用）：`/api/biz/account/query-customer-account-report`、`/api/biz/recharge/user-recharge-list`。
+- 智谱控制台登录 ✅ 已完成（用户浏览器滑块验证 + 短信，session cookie 已存 `.secrets/`）；余额/价格数据已读。
 - Kimi 平台控制台会话：旧短信登录接口返回 401（已下线），控制台登录弹窗 chunk 已从 CDN 撤下；已用 OAuth 设备流（auth.kimi.com，kimi-cli 同款）完成 SSO 登录，但 kimi-code 令牌读不了平台计费面板。Kimi 花费改用官方单价 × usage sidecar 精确核算。
