@@ -27,8 +27,8 @@
 - **F12 平台 flag 跨 run 不变**：g-39/g-13/g-32 的 flag 与 run 5 完全一致（平台不重随机化）。→ 任何历史 flag 记忆 = 直接复用；clean-room 价值比预想更高，F5/F6 的清理是必须而非可选。
 
 ### 工具/运行时类
-- **F8 glm-5.3-flash 派单静默失败**：3/3 次 dispatch（g-19/g-30/g-32）terminal=failed 且 detail 为空；主 agent 自己兜底解掉（verdict complete）。直接 curl 验证 API 正常（thinking enabled / 不带 thinking 字段均可）。根因待查（疑 zhipu-official 派单链路或 effort 处理）；**detail 为空 = 失败诊断未透出，audit 需要补 diagnostic**。
-- **F9 usage sidecar 零写入**：usageLines:0，dev storages 无 llm-usage.jsonl；已装 compat 构建含写入代码（adapter.ts）。jisi_usage 全程无数据 → 花费核算盲区。待查：headless spawn 的子代理 LLM 调用是否走 compat stream，或写盘路径漂移。
+- **F8 glm-5.3-flash 派单静默失败（收敛中）**：3/3 次 dispatch（g-19/g-30/g-32）terminal=failed 且 detail 为空；主 agent 自己兜底解掉。API 直连正常（thinking enabled / 不带 thinking 均可）；全部会话无 zhipu 调用痕迹 → 死在 ctx.subagents.start 的 spawn 阶段（agentOptions.provider=zhipu-official 未生效或子代理起不来），LLM 根本没被调用。战后用 jisi_fanout(glm) 最小复现定根因。**detail 为空 = 失败诊断未透出，audit 需补 diagnostic。**
+- **F9 usage sidecar 零写入（根因已定位，与 F8 同源）**：全部会话检索无任何 zhipu 调用痕迹 → glm 子代理在 spawn 阶段即失败，从未产生 LLM 调用；usage sidecar 只覆盖 compat 路由（kimi/智谱），native deepseek 路由本就不记（backlog：deepseek-native-adapter 也要 sidecar）。→ 战役全程花费核算盲区，靠 watcher 余额差兜底。
 - **F10 watch-campaign 误报**：审计文件尚不存在时报 stale 999999s（启动期 2 条误警）。guard-runner 有 AUDIT_SEEN 门，watcher 没有。→ 补同样门。
 - **F11 agent 的 bash 里看不到 BENCHMARK_TOKEN**：main agent 曾为探平台 API 花 2 轮逆向前端（token 在 launcher env，不在 agent shell）。平台知识应经工具而非 agent shell 提供。
 
