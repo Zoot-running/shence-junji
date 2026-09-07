@@ -16,7 +16,7 @@
 - 02:45（56min）：16500 / 33 题。
 - 02:47（57min）：17200 / 34 题（g-24 落）。审计统计：failed terminal 仅 3 个（全是 pre-fix 的 glm），timeout verdict 0，共 38 verdict——派单可靠性高，round-timeout 机制尚未触发过。平台实况剩 7 题（g-02/g-03/g-06/g-14/g-17/g-24/g-34，共 4300 分），容器已清空、主 agent 排下一波。g-38/g-01/g-40 三 hard 已倒（各磨 11-12 轮）。DeepSeek ¥13.7。
 - **F8/F9 旁证**：独立复现进程的 jisi_fanout(glm) 成功调用在 sidecar 落 2 行（usageLines 0→2）——sidecar 机制本身正常，只覆盖 compat 路由；战役进程全程 0 行 = glm 派单从未成功路由过（与 F8 同源）。硬题区开火：g-38/g-01/g-25 三硬核在打（wave 11，各 ~11 rounds 磨题），主 agent 已排好 wave 12-15 全量计划（g-40/g-27/g-28 → g-02/g-03/g-34 → g-24/g-17/g-06 → g-14）。
-- **观察 F13（候选）**：硬题磨题仍用一次性 deepseek-v4-flash 重派（rounds:11 重开新兵），continuable 续战机制 0 使用；战报（FINDINGS.md）承担了跨轮状态传递。战后判断：continuable 未激活是主 agent 判断（board 传递够用）还是机制未达发现门槛。
+- **F13（更新）**：fanout 在收官 hard 双子（g-02/g-03）首次真实使用（主 agent 原话 cheap insurance，5 模型并行征思路，含 glm-5.3×4 / kimi-k2.6×1，全部成功）——fanout 是"需要时用"的合理形态；continuable 仍 0 使用（跨轮状态由 FINDINGS.md 战报承担）。战后复盘：board 传递是否够（硬题 rounds 10+ 的轮次成本 vs continuable 续战的省轮次潜力）。
 - 派单模型分布：deepseek-v4-flash ×25（全成功）、glm-5.3-flash ×3（全静默失败，见 F8）——主 agent 已停止使用 glm（账本/观察生效）。
 
 ## 发现（F 编号，战后定稿）
@@ -35,6 +35,8 @@
 - **F12 平台 flag 跨 run 不变**：g-39/g-13/g-32 的 flag 与 run 5 完全一致（平台不重随机化）。→ 任何历史 flag 记忆 = 直接复用；clean-room 价值比预想更高，F5/F6 的清理是必须而非可选。
 
 ### 工具/运行时类
+- **F8 glm-5.3-flash 派单静默失败（根因已实锤 + 暂态修正）**：
+  新证据（02:50）：主 agent 对 g-02/g-03 发起 jisi_fanout，战役进程内 compat 路由**现在完全正常**——sidecar 记下 zhipu-official/glm-5.3 ×4 + kimi-official/kimi-k2.6 ×1（11.2k/20.5k tokens），全部成功。→ 误路由不是持续进程状态，而是**开局 4 分钟窗口的暂态**（疑插件注册竞态），叠加"解析失败静默回落默认路由"的 bug 才造成 3 连静默死亡。我方响亮失败护栏（jisi 0bfa3d9）正是把这类暂态从无声损失变成当场可见的正确修法。
 - **F8 glm-5.3-flash 派单静默失败（根因已实锤）**：子代理 session 的 request/header 显示 `provider=deepseek-official, model=glm-5.3-flash, reasoningEffort=low` → DeepSeek 报"supported API model names are..." → 子代理无输出静默死亡（turn/end reason=error 但 detail 落账为空）。即：**model→provider 解析在战役进程里失效，回落到父 agent 的 deepseek-official 路由**。对照实验：独立 workdir 新进程 jisi_fanout(glm-5.3-flash) 带/不带 effort=low 均成功——同一 profile 新 boot 正常，战役进程异常（进程内状态不可事后内省）。修复（已实施，run 内不生效、下次 boot 生效）：①jisi.delegate 解析不到 provider / 目录未宣告模型 → 响亮失败（jisi `0bfa3d9`，已测 26/26）；②runner enqueue 前校验模型在集思目录（yebushou `ca2be63`，已测 10/10）；③hufu terminal detail 带诊断——jisi 已有 [diagnostic] 追加逻辑，空 detail 的根因是 DSH 对 model-name 校验错误不产 diagnostic，①的护栏使该场景不再发生。
 - **F9 usage sidecar 零写入（根因已定位，与 F8 同源）**：全部会话检索无任何 zhipu 调用痕迹 → glm 子代理在 spawn 阶段即失败，从未产生 LLM 调用；usage sidecar 只覆盖 compat 路由（kimi/智谱），native deepseek 路由本就不记（backlog：deepseek-native-adapter 也要 sidecar）。→ 战役全程花费核算盲区，靠 watcher 余额差兜底。
 - **F10 watch-campaign 误报**：审计文件尚不存在时报 stale 999999s（启动期 2 条误警）。guard-runner 有 AUDIT_SEEN 门，watcher 没有。**已修复**（shence-jintuo `9520900`，AUDIT_SEEN 门，watcher 已重启）。
