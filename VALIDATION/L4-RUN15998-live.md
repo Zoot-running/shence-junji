@@ -54,3 +54,14 @@
 3. F13 复盘：continuable/fanout 全程零使用——查主 agent 是否知道这两个机制（工具描述可达性），判断是机制门槛还是合理判断。
 4. 终稿：得分曲线 vs run 5 对比、花费对比、F1-F12 定稿 → L4-RUN15998.md。
 5. 余额校准快照（DeepSeek/Kimi/智谱）与 jisi priceTable 一致性复核。
+
+## 战后重装命令（确认版本已陈旧：profile 内 jisi/runner lib 均为 09-06/09-07 构建）
+```bash
+# 在 dev checkout 内（或直接操作 profile 目录）：
+cd /mnt/d/Software/WSLSoftware/Agents/deepseek-harness-dev
+node apps/cli/lib/bin.js plugin --profile headless rm @shence/jisi
+node apps/cli/lib/bin.js plugin --profile headless add "file:/mnt/d/Software/WSLSoftware/Projects/Security/ShenCe/shence-jisi"
+node apps/cli/lib/bin.js plugin --profile headless rm @shence/xiaochang-runner
+node apps/cli/lib/bin.js plugin --profile headless add "file:/mnt/d/Software/WSLSoftware/Projects/Security/ShenCe/shence-yebushou/packages/runner"
+# 同理刷新 @shence/hufu / llm-openai-compat（如有新提交）
+```
