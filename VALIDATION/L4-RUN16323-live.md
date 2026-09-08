@@ -49,3 +49,8 @@
   平台怪癖的现场应对样本，非卡死。g-11/g-36 已进第 4 轮（medium 磨题区）。
 - 02:20（75min）：10600 持平（提交滞后于解题：g-11 Delulu pwn 已解、g-36 FLAG_CANDIDATE 待交、
   g-37 剪枝 blocked）。stall 告警线（25min）未触发，agent 在验证-提交环节。
+- 02:27（82min）：**主 agent 自主发现平台 flag 规律（重要）**——带"保留原始格式"注记的题
+  保持 canonical flag（HTB/SEKAI 静态）；无注记题 = 平台随机 flag{uuid}（必须线上利用现取）。
+  F12 修订：跨 run 不变只适用于"注记题"；无注记题的 uuid 每 run 重掷（run 7 与 run 6 不同）。
+  agent 据此修正后续战略（g-03/g-04/g-10/g-17/g-18 转线上利用）。
+- 已接受：+700（mmh3 bloom multicollision，平台 score_events 有滞后）。
