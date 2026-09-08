@@ -61,3 +61,5 @@
   （agent 先派 g-18/23/26 执行者，fanout 识别 9 hard 的计划在其后）。
 - 02:53（108min）：14600 分 / 30 题。hard 区稳步推进（Kimi 开始小额消耗 ~¥24，
   agent 在 hard 波启用 Kimi 模型）。fanout 仍未调用（计划可能被直接派单替代）。
+- 03:00（115min）：14600 持平。agent 在管理 round 超时（deadline 前查战报、接近完成的重派
+  接续）——timeout 机制的现场执行样本。hard 10 题磨题中。
