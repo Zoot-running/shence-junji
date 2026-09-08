@@ -54,3 +54,6 @@
   F12 修订：跨 run 不变只适用于"注记题"；无注记题的 uuid 每 run 重掷（run 7 与 run 6 不同）。
   agent 据此修正后续战略（g-03/g-04/g-10/g-17/g-18 转线上利用）。
 - 已接受：+700（mmh3 bloom multicollision，平台 score_events 有滞后）。
+- 02:42（97min）：F23 修复 live 验证 ✓（apply 层心跳独立输出，不依赖 setup）。
+  g-30 解出（PHP 松比较 OTP，+600 待平台确认）。agent 宣布将对 9 个 hard 题
+  （g-02/03/04/10/17/20/27/28/34）发起 jisi_fanout 识别原题——fanout 验证项即将开火。
