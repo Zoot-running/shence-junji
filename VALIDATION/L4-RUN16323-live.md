@@ -27,3 +27,7 @@
 - **批次二 live 验证新增**：虎符快照恢复闭环 ✓（kill -9 后 9 个 work item 从
   hufu-campaigns/tsecbench-run-16323.json 恢复）、boards/<runId> 命名空间隔离 ✓。
 - 01:27（22min）：0 分——执行者已产出多个 FLAG_CANDIDATE，主 agent 在本地复核后交卷（谨慎期）。
+- 01:31（26min）：300 分（g-05）。插曲：~01:20 agent 的 6 个 HTB flag 提交全部被拒
+  （我手动复核 g-05 也 correct:false），疑平台侧瞬态；01:28-01:31 之间重提成功
+  （同 flag 返回 duplicate=已正确提交）。确认 flag 未重随机化（F12 仍成立）——
+  新鲜附件解密结果与 canonical 一致。agent 自行调查后恢复提交，调度闭环又一次自愈。
