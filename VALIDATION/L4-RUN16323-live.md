@@ -63,3 +63,5 @@
   agent 在 hard 波启用 Kimi 模型）。fanout 仍未调用（计划可能被直接派单替代）。
 - 03:00（115min）：14600 持平。agent 在管理 round 超时（deadline 前查战报、接近完成的重派
   接续）——timeout 机制的现场执行样本。hard 10 题磨题中。
+- 03:06（121min）：14600 持平（12min）。hard 3 题在途（g-18/20/26），7 题排队。
+  Kimi 消耗 ~¥62（hard 波主力之一）。stall 告警线 25min，尚未触发。
