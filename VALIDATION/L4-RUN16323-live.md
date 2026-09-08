@@ -16,3 +16,14 @@
 ## 得分轨迹
 - 01:12（~7min）：0 分，前两代 agent 在修 F21/F22 环境问题；第三代正常：setup 完成（含 pre-run sweep），
   g-05/g-07/g-32 三容器已开（附件题优先策略），执行者 prompt 编写中。
+
+## F8 真正根因（决定性证据，run 7 告破）
+- fresh boot 子代理 header `provider=zhipu-official`（jisi 直连正常）vs 战役子代理
+  `provider=deepseek-official`——真相：headless profile 里 **hufu 排在 jisi 前装载**，
+  hufu apply 时 ctx.get('jisi')=undefined → 永远走无 provider 回退分支 → 所有非默认
+  模型派单被误送父路由静默死亡。run 6 的"开局暂态"理论错误——是接线缺失。
+- 修复（hufu `7238d26`）：①inject ['jisi']（cordis 强制装载顺序）；②派单时惰性解析兜底；
+  ③无 jisi 通道时模型覆盖响亮失败 [no-jisi-channel] 而非盲派。已热装 + 战役重启。
+- **批次二 live 验证新增**：虎符快照恢复闭环 ✓（kill -9 后 9 个 work item 从
+  hufu-campaigns/tsecbench-run-16323.json 恢复）、boards/<runId> 命名空间隔离 ✓。
+- 01:27（22min）：0 分——执行者已产出多个 FLAG_CANDIDATE，主 agent 在本地复核后交卷（谨慎期）。
