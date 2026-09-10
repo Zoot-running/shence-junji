@@ -29,7 +29,7 @@
 |---|---|---|
 | C1 | 平台反馈：6 题校验库脱钩证据（附件 md5/线上打印值/run 7 同值 accepted/answer_wrong 时间线） | 文档已备（run8-platform-feedback.md）；平台反馈接口 500 收不了件，待人工渠道转达 |
 | C2 | ~~平台是否补录 2600 分~~ | **已搁置（用户 2026-09-10 指示：不管了）** |
-| C3 | DeepSeek 官方定价页更新（pro 路由结算价/flash 降价） | 待官方页更新后校准 jisi priceTable（用户：过会说） |
+| C3 | DeepSeek 调价（V4.1-Flash 新价/新名 deepseek-flash/pro 09-14 路由） | **已校准**（jisi `587d620`，2026-09-11） |
 
 ## D. 搁置项（用户指示，暂不启动）
 
