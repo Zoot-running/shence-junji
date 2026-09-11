@@ -47,11 +47,11 @@
 ## 6. 计划（DAG + 关键路径 + 并行度——评审协议的应用实例）
 
 ```
-W1 立项书模板定稿（本文档，含实例）        ← 依赖：无
-W2 计划评审协议 + 复盘分类模板（文档）      ← 依赖：无（与 W1 可并行）
-W3 projectize SKILL（三模板转 agent 可用文本）← 依赖：W1 + W2
-W4 run 10 实战验证                          ← 依赖：W3（前置：用户提供 token + VPN）
-W5 战后复盘落账 + POC 结论                  ← 依赖：W4
+W1 立项书模板定稿（本文档，含实例）        ✅ 已完成（用户审定 2026-09-11）
+W2 计划评审协议 + 复盘分类模板（文档）      ✅ 已完成（PLAN-REVIEW.md / RETRO-CLASSIFICATION.md，d86db58）
+W3 projectize SKILL（三模板转 agent 可用文本）✅ 已完成（yebushou skills/projectize，eac7bbc）
+W4 run 10 实战验证                          ⏳ 待用户提供 token + VPN
+W5 战后复盘落账 + POC 结论                  ⏳ 依赖 W4
 ```
 
 - **关键路径**：W1/W2 → W3 → W4 → W5；**并行扇出**：W1 ∥ W2（无依赖）。
