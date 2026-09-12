@@ -21,7 +21,7 @@
 | W5-③ | 战后四栏落账 | `xingying_retro` 调用 **5 次**（seed+回填，含 4 名收割专员复盘 + 主控复盘） |
 | W5-④ | jisi/hufu 软依赖可用 | 主机面服务全程可用：`jisi_fanout` 开题 14 条全量征思路（D1 最高杠杆）、hufu 战役快照正常建/归档（`tsecbench-run-17497.json` → archive 12:02） |
 
-**结论：行营 POC W5 通过 → 形态固化结论成立**（见 `METHODOLOGY/CHARTER-POC.md` 收尾与 `PROJECTS.md`）。
+**结论：行营 POC W5 通过 → 形态固化成立**（CHARTER-POC.md 收尾段与 PROJECTS.md 的固化落笔为待办，见观察遗留）。
 
 ## 战况时间线（score_events 权威，节选）
 
@@ -88,7 +88,8 @@
 
 ## 观察遗留
 
-- [ ] Kimi 价表校准（账本高估 2.5×，另案）
+- [ ] CHARTER-POC.md 收尾段 + PROJECTS.md 行营"形态固化"结论落笔（W5 已过，只差文书）
+- [ ] Kimi 价表/用量口径校准（账本高估 2.5×，另案）
 - [ ] GLM 价表校准（本回合已办/进行中，见 jisi 提交）
 - [x] B1 guard 收官确认（本 run 复现：child exit 0 → standing down，零空转）
 - [x] F28 修复（yebushou `7b3941d`）
