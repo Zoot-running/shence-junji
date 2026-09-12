@@ -95,8 +95,9 @@
 
 ## 观察遗留
 
-- [ ] CHARTER-POC.md 收尾段 + PROJECTS.md 行营"形态固化"结论落笔（W5 已过，只差文书）
-- [ ] Kimi 结算复核：等 Moonshot 结算落账后核对 run 11 Kimi 实扣 ≈ ¥44.85（探针 ¥0.103 待结）
+- [x] CHARTER-POC.md 收尾段 + PROJECTS.md 行营"形态固化"结论落笔（`7a1f33d`）
+- [x] Kimi 价表核验：k3 = 20/100 探针**分毫不差**确认（156×20+998×100=¥0.10292=实扣）；
+      k2.7-code（6.5/27/缓存1.3）探针已发、待结算复核
 - [x] 账本双重错因修复（compat 重复写行 + reasoning 双重计价），历史账清理完成
 - [ ] GLM 价表校准（本回合已办/进行中，见 jisi 提交）
 - [x] B1 guard 收官确认（本 run 复现：child exit 0 → standing down，零空转）
