@@ -12,6 +12,7 @@
 | P3 | 集思 | shence-jisi | DSH 插件 | 派单通道（按次指定模型/多模型并行出思路）+ 主 agent 自换模型（经用户同意） |
 | P4a | 夜不收 | shence-yebushou | skill | 黑盒渗透的目标 + 通用经验 + 组织画像自积累机制（画像只产出、不内置） |
 | P4b | 校场（分支） | shence-yebushou@xiaochang | skill 分支 | 继承 P4a；CTF 目标、本地私知、平台适配器、hint 账本、知识治理 |
+| P5 | 行营 | shence-xingying | DSH Agent Preset + 插件 | 项目化调度模式：立项书五槽/计划评审六要素/复盘四栏四桶；集思虎符软依赖（主机挂载+会话可见+缺失回退） |
 | — | 神策中枢文档 | shence-junji | 文档仓 | 章程、ADR、跨仓接口约定、验证报告归档 |
 
 ## P1 虎符（shence-hufu）—— 并行调度（DSH 插件）
