@@ -146,3 +146,31 @@ resource_unavailable、internal、422）；结束约定（全部通关/超时/�
 POST `/runs/hosted/upload-cred {filename}` → `{tmp_secret_id, tmp_secret_key,
 session_token, start_time, expired_time(+1800s), bucket:"tsecbench-static-1304459781",
 region:"ap-guangzhou", key:"test/ZootSec/<ts>_<filename>", url:<COS https url>}`。
+
+## 七、诊断工作流迁移：本地文件 → 托管可见性（用户 2026-09-12 提问）
+
+问题：值守/复盘找问题时看的本地文件，托管模式下还能看到吗？
+答案：**对话级信息都能看（平台留 24 个月）；文件级信息看不到（沙箱销毁）**。
+→ 托管包必须把关键产物"上移对话层"（以工具结果/收尾消息形式进 LLM 会话）。
+
+| 本地文件（现在看的） | 用途 | 托管下等价物 | 可见性 |
+|---|---|---|---|
+| `/tmp/guard-runner-cmd.log`（主 agent 全文转写） | 复盘主因（本次 F28 取证、工具调用计数、调度形态分析全靠它） | `GET /runs/{id}/llm/sessions[/{sid}?from&to]`——**含 thinking/工具调用/tool 结果原文，比本地日志更全**（per-call usage 都带） | ✅ 24 个月 |
+| `~/.dsh-dev/storages/llm-usage.jsonl`（花费账） | 计费对账/价表校准 | `GET /runs/{id}/llm/model-usage`（平台网关观测的权威四元组，按模型聚合）+ 每会话 usage | ✅ 更权威（平台侧口径，天然免掉本次"账本 2.4x 高估"那类问题） |
+| `xiaochang-run-audit.jsonl`（心跳/终态/子代理回报） | 审计轨迹 | run_events（instance_launch/close/answer_correct/wrong）+ 会话内 tool 调用可重建 | ✅/⚠️ 重建而非直读 |
+| `hufu-campaigns/*.json`（快照/DAG） | 调度账本 | ❌ 沙箱销毁即丢；仅会话内提及的部分可重建 | ⚠️ 需改造 |
+| `boards/*/FINDINGS.md`、`plan/retro/war-report` | 跨代理情报/复盘交付物 | ❌ 文件本身随沙箱销毁；**内容若被 read/收尾进对话则保留** | ⚠️ 需改造 |
+| guard/watch 本地日志 | 守护链健康 | 平台接管沙箱（一次性、无需 guard）；值守方改用 status/WS 实时看 | ✅ 角色替换 |
+| 平台 API（status/leaderboard） | 得分/事件 | 同左 + score-timeline/result/matrix | ✅ 不变 |
+
+**托管包必备改造（防止诊断能力降级）**：
+1. **产物上移对话层**：SKILL 要求战报/复盘/计划以"最终收尾消息"输出（进会话记录），
+   不能只写文件——文件带不出沙箱。发现板内容同理：关键情报要让工具结果回显。
+2. **runner 审计收尾**：finish 前把 audit 摘要作为工具返回文本输出（已天然如此——
+   工具返回即进会话）。
+3. **花费账改用平台口径**：战后用 model-usage API 拉四元组，本地 jisi priceTable
+   只做计价（计量不重复造轮子）。
+4. **值守脚本换代**：本地 guard/watch 不出现在托管包；值守侧写一个"托管值守器"——
+   轮询 status + WS logs + model-usage，告警规则沿用金柝语义（无重启职责）。
+5. **LLM 地址改造**：DSH 配置里所有 provider baseURL 改 `<host>.tsecbench.gw`（白名单
+   内域名才通）；沙箱无公网，任何直连公网的调用都会失败——打包前自检。
