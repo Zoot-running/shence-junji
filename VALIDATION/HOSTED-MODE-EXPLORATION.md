@@ -174,3 +174,28 @@ region:"ap-guangzhou", key:"test/ZootSec/<ts>_<filename>", url:<COS https url>}`
    轮询 status + WS logs + model-usage，告警规则沿用金柝语义（无重启职责）。
 5. **LLM 地址改造**：DSH 配置里所有 provider baseURL 改 `<host>.tsecbench.gw`（白名单
    内域名才通）；沙箱无公网，任何直连公网的调用都会失败——打包前自检。
+
+## 七补、会话层覆盖度勘误（用户追问 2026-09-12）
+
+上节"文件级信息看不到"表述过重，勘误如下：
+
+**模型思考的产物 → 几乎全在会话层**（全部 LLM 流量过网关被抓）：
+- `write`/`edit` 的**参数含文件全文**（模型写文件 = 把内容作为 tool-call 参数发出）；
+- `read`/`bash`/board 的**结果含内容**（回读即入会话）；
+- 子代理对话、jisi fanout 的多模型调用都是**独立 LLM 会话**，一样被抓
+  （榜一 729 个会话即证；其 session title 直接就是 submit_fact 的参数全文——已实拉佐证）；
+- 主 agent 的 thinking 与工具调用逐条可查。
+
+**真正不在会话层的只有"不经模型手"的写盘**：
+1. 插件/runner 直接落盘的状态文件（hufu 快照、progress jsonl、usage jsonl）——从来不是
+   模型消息，托管下丢失；但有平台等价物（model-usage 替代 usage jsonl、
+   run_events + sessions 替代 audit）。
+2. 脚本写文件不 echo、agent 不回读的极端情况——内容在脚本逻辑里可再生成，
+   但不保证字节一致。
+
+**还原麻烦度**：内容都在 sessions JSON 里，但按文件树重建需要解析 tool-call
+参数 + 工具结果。→ 立项：**托管局赛后"会话回放重建器"**（拉全量 sessions，
+重建时间线 + 最终文件树 + 战报/复盘/boards 快照到本地，喂给 L4 复盘与军机归档）。
+
+**结论修正**：托管不丢模型产物，丢的是插件内部状态（有平台等价物）与极端未回读
+文件；主要代价不是"看不到"而是"要写重建器换回本地工作流形态"。
