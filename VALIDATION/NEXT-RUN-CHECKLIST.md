@@ -42,7 +42,7 @@
 | B1 | **guard 收官后不空转**：exit 0（正常收官）不重拉，或重拉前查平台 run 状态 | **✓ 已两次实战验证（run 10/11）**：child exit 0 → "normal completion, standing down"，零空转 |
 | B2 | **崩溃恢复闭环**（进程被杀→guard 重拉→快照续跑） | F24/F25 修复后未实战验证（run 8 的重启是干净重建，非续跑） | 待实战触发 |
 | B3 | **watch 告警去噪**：driver-down 在 guard give-up 后刷屏数百条 | run 8 复盘 | 低优先级，待 B1 落地后观察 |
-| B4 | **F28 平台停表静默跳过**（finish 缺参/失败仍报成功） | run 11 实锤（elapsed 2801→3098 空转） | **已修复 yebushou `7b3941d`**；A12 复验 |
+| B4 | **F28 平台停表静默跳过**（finish 缺参/失败仍报成功） | run 11 实锤（elapsed 2801→3098 空转） | **已修复校场 `shence-yebushou@xiaochang` `7b3941d`**；A12 复验 |
 
 ## C. 外部事项（不依赖我方）
 

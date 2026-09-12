@@ -41,7 +41,7 @@
 
 ## 值守方处置记录（1 起真实异常 + 1 起观察项）
 
-- **F28 平台停表静默跳过（已修复 yebushou `7b3941d`）**：agent 12:03 报 "clock stopped"，
+- **F28 平台停表静默跳过（已修复校场 `shence-yebushou@xiaochang` `7b3941d`）**：agent 12:03 报 "clock stopped"，
   但平台 finish 从未落地。根因链：开战令写"工具会从进程环境读取"，而旧实现
   `runBearerToken` 无 env 回退、finish 缺参时**静默跳过且工具仍返回成功** →
   agent 误信停表。值守方三链取证（hufu 已归档=工具执行过 / 日志 0 条 finishRun failed=
@@ -101,5 +101,5 @@
 - [x] 账本双重错因修复（compat 重复写行 + reasoning 双重计价），历史账清理完成
 - [ ] GLM 价表校准（本回合已办/进行中，见 jisi 提交）
 - [x] B1 guard 收官确认（本 run 复现：child exit 0 → standing down，零空转）
-- [x] F28 修复（yebushou `7b3941d`）
+- [x] F28 修复（校场 `shence-yebushou@xiaochang` `7b3941d`）
 - [ ] 战后议：fanout 默认模型档位（便宜档起步 vs 全模型）；pro 解禁与否

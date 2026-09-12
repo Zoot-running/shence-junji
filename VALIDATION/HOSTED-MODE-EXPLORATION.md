@@ -126,7 +126,7 @@
       编排能力）；C=精简镜像（DSH 核心 + runner + 合规 SKILL，不带 jintuo guard——
       沙箱一次性、无崩溃恢复需求，8C16G 内跑 3-5 并发收割专员）
 - [ ] clean-room 打包管线：建"托管包清单"（进包白名单）+ 打包前审计脚本（扫
-     私知/flag/密钥残留）——可放 yebushou governance 或 jintuo
+     私知/flag/密钥残留）——已落地校场 packaging/（`174622c`；备选位 jintuo）
 - [ ] 首托管 run 先跑一次小规模（single 维度或短时限）验证网关/VPN/日志回收链路
 - [ ] 榜前决策：托管满分后是否 publish（公开=全量会话免登录可拉；先复盘后决定，
       publish 前做公开面泄露审计）

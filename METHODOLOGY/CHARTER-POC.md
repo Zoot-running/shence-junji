@@ -49,7 +49,7 @@
 ```
 W1 立项书模板定稿（本文档，含实例）        ✅ 已完成（用户审定 2026-09-11）
 W2 计划评审协议 + 复盘分类模板（文档）      ✅ 已完成（PLAN-REVIEW.md / RETRO-CLASSIFICATION.md，d86db58）
-W3 projectize SKILL（三模板转 agent 可用文本）✅ 已完成（yebushou skills/projectize，eac7bbc）
+W3 projectize SKILL（三模板转 agent 可用文本）✅ 已完成（校场 `shence-yebushou@xiaochang` skills/projectize，`eac7bbc`）
 W4 run 10 实战验证                          ✅ 已完成（满分 20800/20800@5733s，2026-09-12 02:32:55）
 W5 战后复盘落账 + POC 结论                  ✅ 本回填即 W5（见第 7 节）
 ```

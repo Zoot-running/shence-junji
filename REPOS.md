@@ -13,6 +13,9 @@
 | `shence-jisi` | 集思 P3 | DSH 插件 | 派单通道（按次模型）、多模型并行收集、主 agent 自换模型门禁 |
 | `shence-yebushou` | 夜不收 P4a（分支 `xiaochang` = 校场 P4b） | skill | 目标+通用经验+自积累机制；xiaochang 分支：平台适配器/私知/hint 账本/治理 |
 
+> **提交引注约定**：校场（xiaochang 分支）的提交一律写作 `shence-yebushou@xiaochang <hash>`；
+> 夜不收（main 分支）写作 `shence-yebushou@main <hash>`。禁止裸写 "yebushou"（易误读为夜不收）。
+
 ## 各仓 README 骨架（建仓时直接贴）
 
 ### shence-junji/README.md

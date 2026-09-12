@@ -21,11 +21,11 @@
 
 ## 3. 验收口径(done 定义)
 
-- **W1 clean-room 打包管线**(yebushou):`packaging/hosted-pack-audit.py` 可对目录
+- **W1 clean-room 打包管线**(校场 `shence-yebushou@xiaochang`):`packaging/hosted-pack-audit.py` 可对目录
   全量扫描(flag 值/密钥/已知凭据/私知档案名与内容标记/历史题解路径),退出码
   非 0 即阻断打包;`packaging/HOSTED-PACK-MANIFEST.md` 白名单/黑名单成文;
   自测(构造违规样例目录 → 审计命中 → clean 目录通过)。
-- **W2 SKILL 改造**(yebushou xiaochang SKILL):新增"托管模式须知"节——
+- **W2 SKILL 改造**(校场 xiaochang SKILL):新增"托管模式须知"节——
   ①产物上移对话层铁律(战报/复盘/计划以收尾消息输出,发现板关键情报回显)
   ②大模型地址 .gw 自检清单 ③托管红线与平台自动注入变量说明。文本可被
   agent 直接引用执行(行为级验收留给 run 12)。
@@ -49,8 +49,8 @@
 ## 6. 计划(DAG + 并行度)
 
 ```
-W1 打包管线(yebushou)  ─┐
-W2 SKILL 改造(yebushou) ─┼─ 三路独立,并行;共享同一个 yebushou 仓,提交分离
+W1 打包管线(校场@xiaochang) ─┐
+W2 SKILL 改造(校场@xiaochang) ─┼─ 三路独立,并行;共享同一个 shence-yebushou 仓,提交分离
 W3 会话重建器(jintuo)   ─┘
 W0 立项书(junji,本文档) —— 已完成先行
 W4 三仓 commit+push 收口 —— 汇聚点(依赖 W1/W2/W3)
@@ -58,7 +58,7 @@ W4 三仓 commit+push 收口 —— 汇聚点(依赖 W1/W2/W3)
 
 - 关键路径:W1/W2/W3 并行 → W4。执行分工:W1/W2 主 agent 亲做;W3 委托子代理
   (spec 已备:schema 键名 + 端点 + 输出契约 + fixture 测试要求)。
-- 并行度上限:3(两仓无共享状态,冲突面仅 yebushou 同仓不同文件)。
+- 并行度上限:3(两仓无共享状态,冲突面仅 shence-yebushou 同仓(xiaochang 分支)不同文件)。
 
 ## 7. 复盘回填区(战后)
 
@@ -81,5 +81,5 @@ W4 三仓 commit+push 收口 —— 汇聚点(依赖 W1/W2/W3)
     `VALIDATION/HOSTED-MODE-EXPLORATION.md`（已附指针）；
   - C 一次性事实：路径清洗启发式/分页退化判定，已在 jintuo README；
   - D 平台缺陷：无结论（未做真实凭证连测，留待 run 12）。
-- **收口**：junji `50383cf`（立项）+ yebushou `174622c`（W1+W2）+ jintuo `d173cc6`（W3）。
+- **收口**：junji `50383cf`（立项）+ 校场 `shence-yebushou@xiaochang` `174622c`（W1+W2）+ jintuo `d173cc6`（W3）。
   三件套就绪，run 12 托管局可立项。

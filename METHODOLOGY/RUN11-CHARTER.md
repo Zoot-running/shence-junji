@@ -47,5 +47,5 @@
 - **决策-结果**：D1 fanout 全量征思路=最高杠杆；D5 收割专员串行制=5200→20800 转折点；
   D4 放任 20+ 执行者抢 3 槽=最大失误（升格 SKILL：稀缺资源场景勿让 N 方各自抢资源）。
 - **异常与修复**：F28 平台停表被 runner 静默跳过（缺 runBearerToken env 回退 + finish 报成功），
-  值守方取证后补调 finish 止损（多走 ~297s），yebushou `7b3941d` 已修（大声报错 + env 回退）。
+  值守方取证后补调 finish 止损（多走 ~297s），校场 `shence-yebushou@xiaochang` `7b3941d` 已修（大声报错 + env 回退）。
 - **遗留**：Kimi/GLM 价表校准；fanout 默认档位与 pro 解禁=战后议。
