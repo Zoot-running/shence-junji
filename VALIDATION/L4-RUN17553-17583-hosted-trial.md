@@ -80,3 +80,25 @@
 - model-usage 实锤 GLM 网关修复：glm-4.5-air/4.6/5.3/5.3-flash 全部出现流量。
 - 正式局（run 17710，v9）随后开跑：执行者默认 glm-5.3-flash、停表条件单句
   无歧义、时间以 budgetRemainingMin 为准。结果另录。
+
+## 附录2：F30 事件驱动等待验证轮（run 17761/17760，2026-09-13 晨）
+
+- **17760（F29 推式唤醒版）失败**：agent 按令"结束回合休眠等通知"→ headless 一次性
+  驱动回合结束即退出进程（goal 轮续跑与之赛跑必输），66s 局终。实锤 v9 agent
+  为什么用 bash sleep：**回合结束=进程自杀, sleep 是当时唯一的等待手段**。
+- **修复三件套**：①hosted-guard（金柝托管化：guard 为容器主进程，driver 退出不杀
+  沙箱；只有全终态 finish 写 .campaign-finished 才 standing down——停表条款机制化）
+  ②xiaochang_wait（零 token 事件驱动等待：settle/账本/会话消息/超时四路唤醒）
+  ③虎符 onSettle 广播（一次性执行者 report 结算时广播 settle 事件）。
+- **17761（v12 验证）全过**：
+  - xiaochang_wait 被 settle 事件 **17 秒内唤醒**（dispatch 09:54:42→terminal
+    09:54:59→settle 唤醒, 返回文本带答案）——非超时路径 ✓；
+  - sleep 截断取证（bash sleep 300 被 60s SIGTERM）✓；
+  - **guard 重拉循环实战验证**：6 个主会话生命周期（761541→761700），每轮
+    "回合结束→driver 退出→guard 重拉→新会话幂等恢复→继续解题"——B2 崩溃恢复
+    闭环在托管沙箱跑通；
+  - 30 分钟 6 题入账（1500 分）——每轮重拉后吞吐健康（~1 题/5 分钟）。
+- **设计缺口（已修 b054c4e）**：验证局无全终态 → 守卫标记写不上 → guard 无限
+  重拉到 6h 钟。xiaochang_finish 加 force 参数（验证/应急局显式收官；正式局
+  开战令不提 force，停表纪律不变）。
+- 待办：正式局开跑（v13 = v12 镜像 + 正式开战令）；验证局下次用 finish{force:true} 收尾。
