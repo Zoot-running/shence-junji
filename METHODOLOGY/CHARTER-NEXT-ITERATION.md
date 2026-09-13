@@ -32,6 +32,17 @@
   `observations:[fact]`;
 - hufu feed 时解析并按题存入图账本。
 
+### ②b 执行中分叉即时报(F32)——分叉发生的瞬间就变成调度输入
+- 新工具 `xiaochang_fork`(执行者会话可用):执行者遇到"两步/多步思路"时立即调用,
+  参数 {branches:[{branch, whyViable, needs}], chosen: index}——
+  **自己选一路继续走,其余分叉连同上下文立刻交给主 agent**;
+- 机制:runner 把 fork 条目写入该题图账本(forks),并**立即向主 agent 会话投递
+  通知消息**(与 settle 通知同通道)——正在 xiaochang_wait 阻塞的主 agent 被
+  "会话消息"唤醒,读 fork 上下文后**马上 enqueue 未走分叉**(新种子、prompt
+  自带该分叉的 whyViable/needs),并行度即时放大;
+- 效果:分叉从"终态报告里的一条记录"升级为"运行中的实时调度事件"——
+  主 agent 不用等执行者收工就能开新兵。
+
 ### ③ 全局解题图账本(hufu + runner)——主 agent 的账
 - 结构:item → entries[{kind, path, conclusion, evidence, by, at}];
   存于虎符战役快照(随快照持久化,guard 重拉后新会话读图即恢复全局认知);
@@ -48,6 +59,8 @@
 3. xiaochang_graph 输出每题路径状态(单测 + 验证轮实拉);
 4. 派单 prompt 自动携带死路清单(单测断言);
 5. 验证轮:三机制在托管沙箱实测通过(轻量验证,force 收官);
+   ②b 单独验证:执行者调用 xiaochang_fork → 主 agent 在 wait 中被消息唤醒、
+   立即 enqueue 未走分叉(时间线可见);
 6. 下一正式局:花费 ≤¥50、尝试破 1h26m(v13 纪录)。
 
 ## 5. 复盘回填区(战后)
