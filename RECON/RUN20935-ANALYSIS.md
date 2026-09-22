@@ -55,3 +55,11 @@
 ## D. 模型分布
 
 **403/403 会话全部 `deepseek-flash`**（`base_model=["deepseek-flash"]`），**无跨模型 fanout**。分角色不换模型，靠 12 个 persona/角色 prompt（御主=监督、编排器=执行、进化编辑、二次验证撰稿员、以及 `recon/web-exploit/flag-hunt/lateral/privesc/lead/finding-review`）。工具频次：`run_cmd`5946、`http_request`3695、`add_node`433、`add_edge`293、`report_flag`109、`report_finding`56、`report_shell`26、`request_hint`17、`propose_intents`22。文本里出现的 gemini/qwen/grok 均为靶场 ComfyUI 节点名（a-18/c-02 靶标），非所用模型。
+
+---
+
+## 原始数据留档位置（2026-09-22 研究子代理产出）
+
+- 工作区报告：`recon/RUN20935-ANALYSIS.md`（Tsecbench 工作区）
+- 原始数据：`/tmp/ts20935/`（`agent20935.json` = 全量 run_events 210 条 + score_events 63 条；`sessions.json` = 403 会话索引；`s/*.json` = 全部会话明细，约 12588 次工具调用）——若 /tmp 被清，重新拉取方法：`GET /api/v1/leaderboard/agent/20935`（免 token）+ `.../llm/sessions` 分页。
+- 已蒸馏落地的改动：runner `f1175f4`（多旗题作战帧·内网穿透分层铁律·爆破纪律；hint JIT 决策树），SKILL/order 同批。
